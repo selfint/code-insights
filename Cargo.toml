@@ -1,12 +1,2 @@
-[package]
-name = "code-insights"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-lsp-client = { git = "https://github.com/selfint/lsp-client", tag = "v0.1.0" }
-clap = "4.0.32"
-git2 = "0.16.0"
-tree-sitter = "0.20.9"
+[workspace]
+members = ["lsp-shell"]
