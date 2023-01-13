@@ -1,14 +1,7 @@
-use std::future::Future;
-
-use anyhow::{anyhow, Result};
-use lsp_client::{
-    jsonrpc_types::{JsonRPCResult, Response},
-    lsp_types::{
-        notification::Notification as LspNotification,
-        request::{Initialize, Request as LspRequest},
-        InitializeError, InitializeParams, InitializeResult,
-    },
-    LspClient,
+use lsp_client::lsp_types::{
+    notification::{Initialized, Notification as LspNotification},
+    request::{Initialize, Request as LspRequest},
+    InitializeError, InitializeParams, InitializedParams,
 };
 use serde::{de::DeserializeOwned, Serialize};
 
@@ -40,5 +33,15 @@ impl RequestCommand for InitializeCmd {
 
     fn build_parameters(args: Vec<&str>) -> <Self::RequestType as LspRequest>::Params {
         InitializeParams::default()
+    }
+}
+
+pub struct InitializedCmd;
+
+impl NotificationCommand for InitializedCmd {
+    type NotificationType = Initialized;
+
+    fn build_parameters(args: Vec<&str>) -> <Self::NotificationType as LspNotification>::Params {
+        InitializedParams {}
     }
 }

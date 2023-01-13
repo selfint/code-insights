@@ -8,8 +8,10 @@ use lsp_client::{
     server_proxy::StdIOProxy,
     LspClient,
 };
-use serde::{de::DeserializeOwned, Serialize};
+use serde::Serialize;
 use std::io::{self, Write};
+
+use crate::commands::InitializedCmd;
 
 struct State {
     pub client: Option<LspClient>,
@@ -85,6 +87,26 @@ fn handle_start(state: &mut State, cmd: &[&str]) {
 
 fn handle_notification(state: &State, notification: &[&str]) {
     println!("got notification: {:?}", notification);
+
+    let Some(ref client) = state.client else {
+        println!("LSP client is not initialized, can't send notification.");
+        return;
+    };
+
+    let request = notification;
+    println!("got request: {:?}", request);
+
+    let request_type = request.first().unwrap();
+    let request_args = request.iter().skip(1).copied().collect::<Vec<_>>();
+
+    (match *request_type {
+        "initialized" => handle_notification_cmd::<InitializedCmd>(client, request_args),
+        other => {
+            println!("Unknown request type: '{}'", other);
+            return;
+        }
+    })
+    .unwrap();
 }
 
 async fn handle_request(state: &mut State, request: &[&str]) {
